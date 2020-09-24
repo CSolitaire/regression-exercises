@@ -25,10 +25,10 @@ def wrangle_telco(df):
     df['total_charges'] = pd.to_numeric(df['total_charges'],errors='coerce')
     # Replaces NaN values with 0 for new customers with no total_charges
     df["total_charges"].fillna(0, inplace = True) 
-    return df
     # Splits dataframe in to train, validate, test
-    train, validate, test = train_valid_test(df)
-    return train, validate, test
+    #train, validate, test = train_valid_test(df)
+    #return train, validate, test
+    return df
 
 
 
