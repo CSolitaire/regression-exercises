@@ -1,4 +1,4 @@
-# Linear Regression Unit
+# Linear Regression Module
 This will contain lessons and exercises for the regression module.
 
 # Setup
