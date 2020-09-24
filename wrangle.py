@@ -5,6 +5,11 @@ from env import host, user, password
 
 ###################### Acquire Telco Churn Data ######################
 
+def train_valid_test(df):
+    train_validate, test = train_test_split(df, test_size = .2, random_state = 123, stratify = df.churn)
+    train, validate = train_test_split(train_validate, test_size = .3, random_state = 123, stratify = train_validate.churn)
+    return train, validate, test
+
 def get_connection(db, user=user, host=host, password=password):
     '''
     This function uses my info from my env file to
@@ -32,7 +37,8 @@ def new_telco_data():
     # Replaces NaN values with 0 for new customers with no total_charges
     df["total_charges"].fillna(0, inplace = True) 
     df.to_csv('telco_churn.csv')
-    return df
+    train, validate, test = train_valid_test(df)
+    return train, validate, test
 
 def wrangle_telco(cached=False):
     '''
