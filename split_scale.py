@@ -79,6 +79,16 @@ def iqr_robust_scaler(train, validate, test):
 
 ###################### Inverse Scale Telco Churn Data ######################
 
+def scale_inverse(scaler, test):
+    """
+    Takes in the scaler and scaled test df and returns the test df in the original forms before scaling
+    """             
+    test[['monthly_charges','tenure','total_charges']] = scaler.inverse_transform(test[['monthly_charges','tenure','total_charges']])
+    return test
+
+
+
+
 def standard_scaler_inverse(test):
     '''
     This function returns standard_scaler data back to its origional form.  
