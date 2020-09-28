@@ -18,6 +18,31 @@ def train_valid_test(df):
 
 ###################### Scale Telco Churn Data ######################
 
+def add_scaled_columns(train, validate, test, scaler, columns_to_scale):
+    '''
+    This function takes in train, validate, test dataframes, a scaler, and a list of colums and returns
+    a scaled datafram for train, validate, and test 
+    '''
+    
+    new_column_names = [c + '_scaled' for c in columns_to_scale]
+    scaler.fit(train[columns_to_scale])
+
+    train = pd.concat([
+        train,
+        pd.DataFrame(scaler.transform(train[columns_to_scale]), columns=new_column_names, index=train.index),
+    ], axis=1)
+    validate = pd.concat([
+        validate,
+        pd.DataFrame(scaler.transform(validate[columns_to_scale]), columns=new_column_names, index=validate.index),
+    ], axis=1)
+    test = pd.concat([
+        test,
+        pd.DataFrame(scaler.transform(test[columns_to_scale]), columns=new_column_names, index=test.index),
+    ], axis=1)
+    
+    return scaler, train, validate, test
+
+
 def standard_scaler(train, validate, test):
     '''
     This function scales data using a standard sclaler. 
@@ -78,14 +103,29 @@ def iqr_robust_scaler(train, validate, test):
     return scaler, train, validate, test
 
 ###################### Inverse Scale Telco Churn Data ######################
+  
 
-def scale_inverse(scaler, test):
-    """
-    Takes in the scaler and scaled test df and returns the test df in the original forms before scaling
-    """             
-    test[['monthly_charges','tenure','total_charges']] = scaler.inverse_transform(test[['monthly_charges','tenure','total_charges']])
-    return test
+def scale_inverse(train, validate, test, scaler, columns_to_scale, columns_to_inverse):
+    '''
+    This function takes in scaled train, validate, test dataframes, a scaler, and a list of colums and returns
+    a scaled datafram for train, validate, and test 
+    '''
 
+    new_column_names = [c + '_inverse' for c in columns_to_inverse]
+    scaler.fit(train[columns_to_scale])
+    train = pd.concat([
+        train,
+        pd.DataFrame(scaler.inverse_transform(train[columns_to_inverse]), columns=new_column_names, index=train.index),
+    ], axis=1)
+    validate = pd.concat([
+        validate,
+        pd.DataFrame(scaler.inverse_transform(validate[columns_to_inverse]), columns=new_column_names, index=validate.index),
+    ], axis=1)
+    test = pd.concat([
+        test,
+        pd.DataFrame(scaler.inverse_transform(test[columns_to_inverse]), columns=new_column_names, index=test.index),
+    ], axis=1)
+    return train, validate, test
 
 
 
