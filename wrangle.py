@@ -133,3 +133,12 @@ def wrangle_telco():
     #train, validate, test = scale_inverse(train, validate, test)
     # Scales data and return scaled data dataframes
     return scale_telco_data(train, validate, test)
+
+###################### Wrangle grades classroom explore data ######################
+
+def wrangle_grades():
+    grades = pd.read_csv("student_grades.csv")
+    grades.drop(columns="student_id", inplace=True)
+    grades.replace(r"^\s*$", np.nan, regex=True, inplace=True)
+    df = grades.dropna().astype("int")
+    return df
