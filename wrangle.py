@@ -113,13 +113,14 @@ def scale_inverse(train, validate, test, scaler, columns_to_scale, columns_to_in
 
 ###################### Prepared Telco Churn Data ######################
 
-def wrangle_telco_scaled():
+def wrangle_telco(scale_data =True):
     ''' 
     This function preforms 4 operations:
     1. Reads in the telco data from a csv file
     2. Changes total_charges to a numeric variable and replaces any NaN values with a 0 
     3. Splits prepared data in to train, validate, test  
-    4. Scales and returns dataframes
+    4. If scale_data = True returns scaled train, validate, test
+       If scale_data = False returns non scaled train, validate, test
     '''
     df = get_telco_data(cached = False)
     # Changes total_charges to numeric variable
@@ -129,31 +130,11 @@ def wrangle_telco_scaled():
     # Split the data in to train, validate, test
     train_validate, test = train_test_split(df, test_size = .2, random_state = 123)
     train, validate = train_test_split(train_validate, test_size = .3, random_state = 123)
-    # Inverse scale
-    #train, validate, test = scale_inverse(train, validate, test)
-    # Scales data and return scaled data dataframes
-    return scale_telco_data(train, validate, test)
-
-def wrangle_telco():
-    ''' 
-    This function preforms 4 operations:
-    1. Reads in the telco data from a csv file
-    2. Changes total_charges to a numeric variable and replaces any NaN values with a 0 
-    3. Splits prepared data in to train, validate, test  
-    4. Returns train, validate, test
-    '''
-    df = get_telco_data(cached = False)
-    # Changes total_charges to numeric variable
-    df['total_charges'] = pd.to_numeric(df['total_charges'],errors='coerce')
-    # Replaces NaN values with 0 for new customers with no total_charges
-    df["total_charges"].fillna(0, inplace = True) 
-    # Split the data in to train, validate, test
-    train_validate, test = train_test_split(df, test_size = .2, random_state = 123)
-    train, validate = train_test_split(train_validate, test_size = .3, random_state = 123)
-    # Inverse scale
-    #train, validate, test = scale_inverse(train, validate, test)
-    # Scales data and return scaled data dataframes
-    #return scale_telco_data(train, validate, test)
+    if scale_data:
+        # Inverse scale
+        #train, validate, test = scale_inverse(train, validate, test)
+        #Scales data and return scaled data dataframes
+        return scale_telco_data(train, validate, test)
     return train, validate, test
 
 ###################### Wrangle grades classroom explore data ######################
