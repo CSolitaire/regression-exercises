@@ -37,7 +37,7 @@ def months_to_years(df):
     return df
 
 
- def months_to_years_alt(tenure_months, df):
+def months_to_years_alt(tenure_months, df):
     '''
     Function that returns your dataframe with a new feature tenure_years, in complete years as a customer
     '''
