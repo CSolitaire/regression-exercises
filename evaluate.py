@@ -61,6 +61,10 @@ def linear_model(linear_model, target, feature):
     if model_sse > baseline_sse:
         print("Our baseline is better than the model.")
     else:
+        print("Our model beats the baseline")
+        print("It makes sense to evaluate this model more deeply.")
+        print("Baseline SSE", baseline_sse)
+        print("Model SSE", model_sse)
         metrics = pd.DataFrame()
 
         # Sum the squares of the baseline errors
@@ -90,6 +94,11 @@ def linear_model(linear_model, target, feature):
         # F-Test for p value
         f_pval = model.f_pvalue
         print("p-value for model significance = ", f_pval)
+
+        if f_pval < 0.5:
+          print('Reject Null: The model bulit on indipendent variables explains the relationship, validates $r^2$')
+        else:
+          print('Accept Null: A model not built w/ the independent variables explains the relationship, ie Baseline')
         
         def plot_residuals(actual, predicted):
             residuals = actual - predicted
