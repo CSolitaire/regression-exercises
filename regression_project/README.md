@@ -41,7 +41,8 @@ Modified from [datasciencemvp](https://github.com/cliffclive/datasciencemvp/)
 
 ## Data Dictionary
 
-| Feature | Definition |
+| Tax Distribution | Definition |
+| Single Unit Property | The term housing unit refers to a single unit within a larger structure that can be used by an individual or household to eat, sleep, and live. The unit can be in any type of residence such as a house, apartment, mobile home, or may also be a single unit in a group of rooms. Essentially, a housing unit is deemed to be a separate living quarter where the occupants live and eat separately from other residents of the structure or building. They also have direct access from the building's exterior or through a common hallway.
 | --- | --- |
 | Feature 1 | Definition 1 |
 | Feature 2 | Definition 2 |
