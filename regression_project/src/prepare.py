@@ -19,7 +19,7 @@ def wrangle_zillow(path):
     df['garage'].fillna(0, inplace = True)
 
     # New Feature (Ratio of bedroomcnt and bathroomcnt)
-    df['bedbathratio'] = round(df['bedroomcnt'] / df['bathroomcnt'], 2)
+    df['bedbathratio'] = (df['bedroomcnt'] / df['bathroomcnt'])
 
     # Rename columns for clarity
     df.rename(columns={'hashottuborspa':'hottub_spa'}, inplace = True)
@@ -33,11 +33,15 @@ def wrangle_zillow(path):
     df['poolcnt'].fillna(0, inplace = True)
 
     # Rename columns for clarity
-    df.rename(columns={'fireplaceflag':'fireplace'}, inplace = True)
+    df.rename(columns={'fireplacecnt':'fireplace'}, inplace = True)
     # Replaces NaN values with 0 for new customers with no total_charges
     df['fireplace'].fillna(0, inplace = True)
 
-
+    df.drop(columns= ['parcelid', 'id', 'airconditioningtypeid', 'architecturalstyletypeid', 'basementsqft','buildingclasstypeid', 'buildingqualitytypeid',
+                      'calculatedbathnbr', 'decktypeid', 'finishedfloor1squarefeet', 'finishedsquarefeet12', 'finishedsquarefeet13', 'finishedsquarefeet15',
+                      'finishedsquarefeet50','finishedsquarefeet6','fips','fullbathcnt','heatingorsystemtypeid','poolsizesum','pooltypeid10','pooltypeid2',
+                      'pooltypeid7','propertycountylandusecode','propertyzoningdesc','rawcensustractandblock','regionidcity','regionidcounty','regionidneighborhood',
+                      'storytypeid',''], inplace = True)
 
     # drop any nulls
     df = df[~df.isnull()]
