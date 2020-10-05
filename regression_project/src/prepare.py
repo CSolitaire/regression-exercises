@@ -12,7 +12,33 @@ from sklearn.preprocessing import StandardScaler, QuantileTransformer, PowerTran
 
 def wrangle_zillow(path):
     df = pd.read_csv(path)
-        
+
+    # Rename columns for clarity
+    df.rename(columns={'garagecarcnt':'garage'}, inplace = True)
+    # Replaces NaN values with 0 for new customers with no total_charges
+    df['garage'].fillna(0, inplace = True)
+
+    # New Feature (Ratio of bedroomcnt and bathroomcnt)
+    df['bedbathratio'] = round(df['bedroomcnt'] / df['bathroomcnt'], 2)
+
+    # Rename columns for clarity
+    df.rename(columns={'hashottuborspa':'hottub_spa'}, inplace = True)
+    # Replaces NaN values with 0 for new customers with no total_charges
+    df['hottub_spa'].fillna(0, inplace = True)
+
+    # Replaces NaN values with 0 for new customers with no total_charges
+    df['lotsizesquarefeet'].fillna(0, inplace = True)
+
+    # Replaces NaN values with 0 for new customers with no total_charges
+    df['poolcnt'].fillna(0, inplace = True)
+
+    # Rename columns for clarity
+    df.rename(columns={'fireplaceflag':'fireplace'}, inplace = True)
+    # Replaces NaN values with 0 for new customers with no total_charges
+    df['fireplace'].fillna(0, inplace = True)
+
+
+
     # drop any nulls
     df = df[~df.isnull()]
 
