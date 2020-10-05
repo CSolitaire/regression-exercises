@@ -10,60 +10,6 @@ from sklearn.preprocessing import StandardScaler, QuantileTransformer, PowerTran
 
 #################### Prepare ##################
 
-def wrangle_zillow(path):
-    df = pd.read_csv(path)
-
-    # Rename columns for clarity
-    df.rename(columns={'garagecarcnt':'garage'}, inplace = True)
-    # Replaces NaN values with 0 for new customers with no total_charges
-    df['garage'].fillna(0, inplace = True)
-
-    # New Feature (Ratio of bedroomcnt and bathroomcnt)
-    df['bedbathratio'] = (df['bedroomcnt'] / df['bathroomcnt'])
-
-    # Rename columns for clarity
-    df.rename(columns={'hashottuborspa':'hottub_spa'}, inplace = True)
-    # Replaces NaN values with 0 for new customers with no total_charges
-    df['hottub_spa'].fillna(0, inplace = True)
-
-    # Replaces NaN values with 0 for new customers with no total_charges
-    df['lotsizesquarefeet'].fillna(0, inplace = True)
-
-    # Replaces NaN values with 0 for new customers with no total_charges
-    df['poolcnt'].fillna(0, inplace = True)
-
-    # Rename columns for clarity
-    df.rename(columns={'fireplacecnt':'fireplace'}, inplace = True)
-    # Replaces NaN values with 0 for new customers with no total_charges
-    df['fireplace'].fillna(0, inplace = True)
-
-    df.drop(columns= ['parcelid', 'id', 'airconditioningtypeid', 'architecturalstyletypeid', 'basementsqft','buildingclasstypeid', 'buildingqualitytypeid',
-                      'calculatedbathnbr', 'decktypeid', 'finishedfloor1squarefeet', 'finishedsquarefeet12', 'finishedsquarefeet13', 'finishedsquarefeet15',
-                      'finishedsquarefeet50','finishedsquarefeet6','fips','fullbathcnt','heatingorsystemtypeid','poolsizesum','pooltypeid10','pooltypeid2',
-                      'pooltypeid7','propertycountylandusecode','propertyzoningdesc','rawcensustractandblock','regionidcity','regionidcounty','regionidneighborhood',
-                      'storytypeid',''], inplace = True)
-
-    # drop any nulls
-    df = df[~df.isnull()]
-
-    # get object column names
-    object_cols = get_object_cols(df)
-        
-    # create dummy vars
-    df = create_dummies(df, object_cols)
-        
-    # split data (taxvaluedollarcnt is target)
-    X_train, y_train, X_validate, y_validate, X_test, y_test = train_validate_test(df, 'taxvaluedollarcnt')
-        
-    # get numeric column names
-    numeric_cols = get_numeric_X_cols(X_train, object_cols)
-
-    # scale data 
-    X_train_scaled, X_validate_scaled, X_test_scaled = min_max_scale(X_train, X_validate, X_test, numeric_cols)
-        
-    return df, X_train, X_train_scaled, y_train, X_validate_scaled, y_validate, X_test_scaled, y_test
-
-        
 def get_object_cols(df):
     '''
     This function takes in a dataframe and identifies the columns that are object types
@@ -72,12 +18,12 @@ def get_object_cols(df):
     # create a mask of columns whether they are object type or not
     mask = np.array(df.dtypes == "object")
 
-            
     # get a list of the column names that are objects (from the mask)
     object_cols = df.iloc[:, mask].columns.tolist()
-        
+    
     return object_cols
-        
+    
+
 def create_dummies(df, object_cols):
     '''
     This function takes in a dataframe and list of object column names,
@@ -85,20 +31,20 @@ def create_dummies(df, object_cols):
     It then appends the dummy variables to the original dataframe. 
     It returns the original df with the appended dummy variables. 
     '''
-        
+    
     # run pd.get_dummies() to create dummy vars for the object columns. 
     # we will drop the column representing the first unique value of each variable
     # we will opt to not create na columns for each variable with missing values 
     # (all missing values have been removed.)
     dummy_df = pd.get_dummies(object_cols, dummy_na=False, drop_first=True)
-        
+    
     # concatenate the dataframe with dummies to our original dataframe
     # via column (axis=1)
     df = pd.concat([df, dummy_df], axis=1)
 
     return df
 
-        
+    
 def train_validate_test(df, target):
     '''
     this function takes in a dataframe and splits it into 3 samples, 
@@ -116,20 +62,20 @@ def train_validate_test(df, target):
     # split train_validate off into train (70% of 80% = 56%) and validate (30% of 80% = 24%)
     train, validate = train_test_split(train_validate, test_size=.3, random_state=123)
 
-            
     # split train into X (dataframe, drop target) & y (series, keep target only)
     X_train = train.drop(columns=[target])
     y_train = train[target]
-        
+    
     # split validate into X (dataframe, drop target) & y (series, keep target only)
     X_validate = validate.drop(columns=[target])
     y_validate = validate[target]
-        
+    
     # split test into X (dataframe, drop target) & y (series, keep target only)
     X_test = test.drop(columns=[target])
     y_test = test[target]
-        
+    
     return X_train, y_train, X_validate, y_validate, X_test, y_test
+
 
 def get_numeric_X_cols(X_train, object_cols):
     '''
@@ -151,7 +97,6 @@ def min_max_scale(X_train, X_validate, X_test, numeric_cols):
     '''
     # create the scaler object and fit it to X_train (i.e. identify min and max)
     # if copy = false, inplace row normalization happens and avoids a copy (if the input is already a numpy array).
-
 
     scaler = MinMaxScaler(copy=True).fit(X_train[numeric_cols])
 
@@ -177,6 +122,56 @@ def min_max_scale(X_train, X_validate, X_test, numeric_cols):
         
     return X_train_scaled, X_validate_scaled, X_test_scaled
 
+
+def wrangle_zillow(path):
+    df = pd.read_csv(path)
+
+    # New Feature (Ratio of bedroomcnt and bathroomcnt)
+    df['bedbathratio'] = round(df['bedroomcnt'] / df['bathroomcnt'],2)
+
+    # Rename columns for clarity
+    df.rename(columns={"hashottuborspa":"hottub_spa","fireplacecnt":"fireplace","garagecarcnt":"garage"}, inplace = True)
+
+    # Replaces NaN values with 0
+    df['garage'] = df['garage'].replace(np.nan, 0)
+    df['hottub_spa'] = df['hottub_spa'].replace(np.nan, 0)
+    df['lotsizesquarefeet'] = df['lotsizesquarefeet'].replace(np.nan, 0)
+    df['poolcnt'] = df['poolcnt'].replace(np.nan, 0)
+    df['fireplace'] = df['fireplace'].replace(np.nan, 0)
+    
+    ## Add dummy variables as new columns in dataframe and rename them, delete origional
+    df["zip"] = df["regionidzip"].astype('category')
+    df["zip"] = df["zip"].cat.codes
+
+    df.drop(columns= ['parcelid','id','airconditioningtypeid','architecturalstyletypeid','basementsqft','buildingclasstypeid','buildingqualitytypeid'], inplace = True)
+    df.drop(columns= ['calculatedbathnbr','decktypeid','finishedfloor1squarefeet','finishedsquarefeet12','finishedsquarefeet13','finishedsquarefeet15'], inplace = True)
+    df.drop(columns= ['finishedsquarefeet50','finishedsquarefeet6','fips','fullbathcnt','heatingorsystemtypeid','poolsizesum','pooltypeid10','pooltypeid2'], inplace = True)
+    df.drop(columns= ['pooltypeid7','propertycountylandusecode','propertyzoningdesc','rawcensustractandblock','regionidcity','regionidcounty','regionidneighborhood'], inplace = True)
+    df.drop(columns= ['storytypeid','threequarterbathnbr','typeconstructiontypeid','unitcnt','yardbuildingsqft17','yardbuildingsqft26','numberofstories'], inplace = True)
+    df.drop(columns= ['fireplaceflag','structuretaxvaluedollarcnt','assessmentyear','landtaxvaluedollarcnt','taxamount','taxdelinquencyflag','taxdelinquencyyear'], inplace = True)
+    df.drop(columns= ['censustractandblock','logerror','transactiondate','garagetotalsqft'], inplace = True)
+
+    # drop any nulls
+    df = df.dropna()
+
+    # get object column names
+    object_cols = get_object_cols(df)
+        
+    # create dummy vars
+    df = create_dummies(df, object_cols)
+        
+    # split data (taxvaluedollarcnt is target)
+    X_train, y_train, X_validate, y_validate, X_test, y_test = train_validate_test(df, 'taxvaluedollarcnt')
+        
+    # get numeric column names
+    numeric_cols = get_numeric_X_cols(X_train, object_cols)
+
+    # scale data 
+    X_train_scaled, X_validate_scaled, X_test_scaled = min_max_scale(X_train, X_validate, X_test, numeric_cols)
+        
+    return df, X_train, X_train_scaled, y_train, X_validate_scaled, y_validate, X_test_scaled, y_test
+
+  
 def run():
     print("Model: Running models...")
     # Write code here
