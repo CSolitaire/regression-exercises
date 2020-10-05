@@ -108,18 +108,18 @@ def min_max_scale(X_train, X_validate, X_test, numeric_cols):
 
     # convert arrays to dataframes
     X_train_scaled = pd.DataFrame(X_train_scaled_array, 
-                                columns=numeric_cols).\
-                                set_index([X_train.index.values])
+                                  columns=numeric_cols).\
+                                  set_index([X_train.index.values])
 
     X_validate_scaled = pd.DataFrame(X_validate_scaled_array, 
-                                    columns=numeric_cols).\
-                                    set_index([X_validate.index.values])
+                                     columns=numeric_cols).\
+                                     set_index([X_validate.index.values])
 
     X_test_scaled = pd.DataFrame(X_test_scaled_array, 
-                                columns=numeric_cols).\
-                                set_index([X_test.index.values])
+                                 columns=numeric_cols).\
+                                 set_index([X_test.index.values])
 
-        
+    
     return X_train_scaled, X_validate_scaled, X_test_scaled
 
 
@@ -141,6 +141,10 @@ def wrangle_zillow(path):
     
     ## Add dummy variables as new columns in dataframe and rename them, delete origional
     df["zip"] = df["regionidzip"].astype('category')
+    df["zip"] = df["zip"].cat.codes
+
+    ## Add dummy variables as new columns in dataframe and rename them, delete origional
+    df["propertylandusetypeid"]=df["propertylandusetypeid"].astype('category')
     df["zip"] = df["zip"].cat.codes
 
     df.drop(columns= ['parcelid','id','airconditioningtypeid','architecturalstyletypeid','basementsqft','buildingclasstypeid','buildingqualitytypeid'], inplace = True)
