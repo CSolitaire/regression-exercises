@@ -155,7 +155,7 @@ def eval_linear_model(linear_model, target, feature):
         f_pval = model.f_pvalue
         print("p-value for model significance = ", f_pval)
 
-        if f_pval < 0.5:
+        if f_pval < 0.05:
           print('Reject Null: The model bulit on indipendent variables explains the relationship, validates $r^2$')
         else:
           print('Accept Null: A model not built w/ the independent variables explains the relationship, ie Baseline')
